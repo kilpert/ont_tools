@@ -15,7 +15,7 @@ steps:
 #_______ REFERENCE FILES _________________________________________________________#
 
 ref:
-  genome: "/mnt/storage1/share/data/genomes/GRCh38.fa"
+  genome: "resources/download_ref/results/homo_sapiens.GRCh38.106.genome.fasta"
   #annotation: "/mnt/SRV018/users/ahgrosc1/data/Homo_sapiens.GRCh38.85.chr.gtf"
   annotation: "/mnt/storage1/users/ahgrosc1/data/gencode.v34.annotation.gtf"
   annotation_bed: "/mnt/storage1/users/ahgrosc1/data/gencode.v34.annotation.bed"
