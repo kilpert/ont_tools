@@ -6,4 +6,5 @@ logo_ncct.png
 .gitignore
 test
 test_qc_db
-resources/download_ref/
+.idea/
+resources/ref_repository/
