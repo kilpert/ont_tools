@@ -8,3 +8,5 @@ test
 test_qc_db
 .idea/
 resources/ref_repository/
+Sample_*/
+qc*/
