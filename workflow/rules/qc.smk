@@ -2,7 +2,7 @@
 
 rule folder_pycoqc:
     input:
-        summarystats = lambda wildcards: [x for y in [glob(r + "/**/sequencing_summary*.txt") for r in map_runs_folder[wildcards.run]] for x in y]
+        summarystats = lambda wildcards: [x for y in [glob(r + "/**/sequencing_summary*.txt", recursive=True) for r in map_runs_folder[wildcards.run]] for x in y]
     output:
         html = "qc/pycoqc/per_run/{run}/{run}.pycoQC.html",
         json = "qc/pycoqc/per_run/{run}/{run}.pycoQC.json"
@@ -50,7 +50,7 @@ rule run_multiqc:
 
 checkpoint split_summary_perbarcode:
     input:
-        lambda wildcards: [i for x in [glob(x + "/sequencing_summary*") for x in ID_barcode_folders] for i in x]
+        lambda wildcards: [i for x in [glob(x + "/**/sequencing_summary*.txt", recursive=True) for x in ID_barcode_folders] for i in x]
     output:
         directory("qc/pycoqc/split_barcodes")
     log:
@@ -109,7 +109,7 @@ rule qualimap:
         "logs/{sample}_qualimap.log"
     threads:
         8
-    params:
+    conda:
         "../env/qualimap.yml"
     shell:
         """
@@ -305,29 +305,31 @@ rule gffcompare:
 
 #_____ MULTI QC  _____________________________________________________________#
 
+## NOT in DAC!!!
 qc_out = {
     'mapping' : expand("qc/qualimap/{s}_genome/genome_results.txt", s = ID_samples),
-    'assembly' : ["qc/quast_results/report.tsv"],
-    'modbases' : expand("qc/qualimap/{s}_modbases/genome_results.txt", s = ID_samples),
-    'variant_calling':[],
-    'structural_variant_calling' : [],
-    'cDNA_stringtie' : expand("qc/gffcompare/{s}_stringtie/{s}_stringtie.stats", s = ID_samples) +
-        expand("qc/pychopper/{s}_stats.txt", s = ID_samples), 
-    'cDNA_flair': 
-        expand("qc/rseqc/{s}.read_distribution.txt", s = ID_samples) + 
-        expand("qc/rseqc/{s}.geneBodyCoverage.txt", s = ID_samples) +    
-        expand("qc/gffcompare/{s}_flair/{s}_flair.stats", s = ID_samples),
-    'cDNA_expression' : 
-        #expand("qc/qualimap/{s}_rna/rnaseq_qc_results.txt", s = ID_samples) + 
-        expand("qc/rseqc/{s}.read_distribution.txt", s = ID_samples) + 
-        expand("qc/rseqc/{s}.geneBodyCoverage.txt", s = ID_samples) + 
-        expand("qc/pychopper/{s}_stats.txt", s = ID_samples) +
-        expand("Sample_{s}/{s}.counts.tsv.summary", s = ID_samples),
-    'dual_demux' : [],
-    'de_analysis' : [],
+    # 'assembly' : ["qc/quast_results/report.tsv"],
+    # 'modbases' : expand("qc/qualimap/{s}_modbases/genome_results.txt", s = ID_samples),
+    # 'variant_calling':[],
+    # 'structural_variant_calling' : [],
+    # 'cDNA_stringtie' : expand("qc/gffcompare/{s}_stringtie/{s}_stringtie.stats", s = ID_samples) +
+    #     expand("qc/pychopper/{s}_stats.txt", s = ID_samples),
+    # 'cDNA_flair':
+    #     expand("qc/rseqc/{s}.read_distribution.txt", s = ID_samples) +
+    #     expand("qc/rseqc/{s}.geneBodyCoverage.txt", s = ID_samples) +
+    #     expand("qc/gffcompare/{s}_flair/{s}_flair.stats", s = ID_samples),
+    # 'cDNA_expression' :
+    #     #expand("qc/qualimap/{s}_rna/rnaseq_qc_results.txt", s = ID_samples) +
+    #     expand("qc/rseqc/{s}.read_distribution.txt", s = ID_samples) +
+    #     expand("qc/rseqc/{s}.geneBodyCoverage.txt", s = ID_samples) +
+    #     expand("qc/pychopper/{s}_stats.txt", s = ID_samples) +
+    #     expand("Sample_{s}/{s}.counts.tsv.summary", s = ID_samples),
+    # 'dual_demux' : [],
+    # 'de_analysis' : [],
     'qc' : ["qc/pycoqc/per_run/run_multiqc_report.html",
-        expand("qc/pycoqc/per_sample/{s}.pycoQC.json", s = ID_samples)],
-    'qc_db': []
+        ##expand("qc/pycoqc/per_sample/{s}.pycoQC.json", s = ID_samples)
+    ],
+    # 'qc_db': []
 }
 
 # Additional output options
@@ -338,6 +340,9 @@ if config['vc']['create_benchmark']:
 #    qc_out += aggregate_sample_pycoqc
 
 qc_out_selected = [qc_out[step] for step in config['steps']]
+
+print("{:#^60}".format(" QC output files (qc_out_selected) "))
+print(qc_out_selected)
 
 rule multiqc:
     input:

@@ -41,6 +41,9 @@ def lookup_split_summary_file(wc):
     """
     Looks up which split barcode file belongs to the sample in the wildcard.
     """
+
+    print("----------->", map_samples_barcode[wc.sample])
+
     bc=[unpack(x)[1] for x in map_samples_barcode[wc.sample]][0]
     f=[unpack(x)[0] for x in map_samples_barcode[wc.sample]][0]
     split_folder = "qc/pycoqc/split_barcodes/sequencing_summary_"+bc+".txt" 

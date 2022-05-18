@@ -114,7 +114,7 @@ include: "rules/qc_database.smk"
 
 out = {
     'mapping' : expand("Sample_{s}/{s}.bam", s=ID_samples),
-#     'qc' : ['qc/multiqc_report.html'],
+    'qc' : ['qc/multiqc_report.html'],
 #     'modbases' : expand("Sample_{s}/{s}.mod.bam", s=ID_samples),
 #     'assembly' : expand("Sample_{s}/{s}.asm.{asm}.fasta",
 #          s=ID_samples, asm=config['assembly']['methods']),
@@ -159,6 +159,7 @@ out = {
 #     out['structural_variant_calling'] +=expand("Sample_{s}/{s}.dipdiff.vcf.gz", s=ID_samples)
 
 out_selected = [out[step] for step in config['steps']]
+print("{:#^60}".format(" Output files (out_selected) "))
 print("out_selected:", out_selected)
 
 
