@@ -1,0 +1,26 @@
+## analysis steps
+
+steps:
+  - mapping
+    #- qc
+
+
+## reference
+
+ref:
+  genome: resources/data_repository2/data_repository/GRCh38_ensembl/genome_fastq/GRCh38.106.genome.fa
+  annotation: resources/data_repository2/data_repository/GRCh38_ensembl/annotation/GRCh38.106.gtf.gz
+  annotation_bed: resources/data_repository2/data_repository/GRCh38_ensembl/annotation/GRCh38.106.bed
+  cDNA: resources/data_repository2/data_repository/GRCh38_ensembl/genome_fastq/GRCh38.106.cdna.fa
+  target_region: resources/target_region.GRCh38.bed
+
+
+## run QC database
+
+run_db_root: "./ont_run_qc"
+
+
+## other
+verbose: True
+skip_name_check: True
+
