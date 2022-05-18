@@ -1,3 +1,8 @@
+## project
+
+sample_file: "sample_run_table.tsv"
+
+
 ## analysis steps
 
 steps:
@@ -12,15 +17,15 @@ ref:
   annotation: resources/data_repository2/data_repository/GRCh38_ensembl/annotation/GRCh38.106.gtf.gz
   annotation_bed: resources/data_repository2/data_repository/GRCh38_ensembl/annotation/GRCh38.106.bed
   cDNA: resources/data_repository2/data_repository/GRCh38_ensembl/genome_fastq/GRCh38.106.cdna.fa
-  target_region: resources/target_region.GRCh38.bed
+  target_region: resources/FAME3/target_region.GRCh38.bed
 
 
 ## run QC database
 
-run_db_root: "./ont_run_qc"
+# run_db_root: "./ont_run_qc"
 
 
 ## other
 verbose: True
-skip_name_check: True
+skip_name_check: True # skip_name_check checks MinKNOW output folder name by regex (fails on a lot of names)
 
