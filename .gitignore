@@ -7,6 +7,8 @@ logo_ncct.png
 test
 test_qc_db
 .idea/
-resources/ref_repository/
+resources/data_repository2/
 Sample_*/
 qc*/
+logs/
+v
