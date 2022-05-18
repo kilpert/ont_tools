@@ -1,8 +1,8 @@
-#=============================================================================#
-#               O N T     A N A L Y S I S     T O O L S                       #
-#=============================================================================#
+##=============================================================================#
+##               O N T     A N A L Y S I S     T O O L S                       #
+##=============================================================================#
 
-#_____ CONFIGURATION __________________________________________________________#
+##_____ CONFIGURATION __________________________________________________________#
 
 import csv
 import os
@@ -18,7 +18,14 @@ configfile: srcdir('../config/config_defaults.yml')
 load_project_config(config['project_config'])
 print_message()
 
-#_____ PARSE SAMPLE FILE _______________________________________________________#
+## config ##############################################################################################################
+
+import json
+print("{:#^60}".format(" Config "))
+print(json.dumps(config, sort_keys=True, indent=4))
+print()
+
+##_____ PARSE SAMPLE FILE _______________________________________________________#
 
 ID_samples = set()
 ID_folders = set()
@@ -83,10 +90,10 @@ if config['verbose']:
     print("Samples: ", ID_samples)
     print("Folders:", ID_folders)
     print("Runs:", ID_runs)
-    print("Barcode Folders: ", ID_barcode_folders)
-    print("Map Folder:", map_samples_folder)
+    print("ID_barcode_folders: ", ID_barcode_folders)
+    print("map_samples_folder:", map_samples_folder)
     print("Map Barcode:", map_samples_barcode)
-    print("Map Runs:", map_runs_folder)
+    print("map_runs_folder:", map_runs_folder)
 
 #_____ INCLUDE MODULES ________________________________________________________#
 
@@ -106,52 +113,54 @@ include: "rules/qc_database.smk"
 #_____ REQUIRED OUTPUT FILES _________________________________________________#
 
 out = {
-    'modbases' : expand("Sample_{s}/{s}.mod.bam", s=ID_samples),
     'mapping' : expand("Sample_{s}/{s}.bam", s=ID_samples),
-    'assembly' : expand("Sample_{s}/{s}.asm.{asm}.fasta",
-         s=ID_samples, asm=config['assembly']['methods']),
-    'variant_calling': [],
-    'structural_variant_calling': [],
-    'cDNA_expression' : expand("Sample_{s}/{s}.counts.tsv", s=ID_samples),
-    'de_analysis' : ["de_analysis/dtu_plots.pdf"],
-    'cDNA_stringtie' : expand("Sample_{s}/{s}.stringtie.gtf", s=ID_samples) +
-        expand("qc/sqanti/{s}_stringtie/{s}_stringtie_classification.txt", s = ID_samples),
-    'cDNA_flair': expand("Sample_{s}/{s}.flair.gtf", s=ID_samples) +
-        expand("qc/sqanti/{s}_flair/{s}_flair_classification.txt", s = ID_samples),
-    'dual_demux': expand("Sample_{s}/{s}_barcode_distribution.pdf", s = ID_samples) + 
-        expand("Sample_{s}/coverage_stats.txt", s = ID_samples),
-    'qc' : ['qc/multiqc_report.html'],
-    'qc_db' : [
-        expand(config['run_db_root'] + "/runs/{run}/{run}.pycoQC.html", run = ID_runs),
-        expand(config['run_db_root'] + "/runs/{run}/{run}.pycoQC.json", run = ID_runs),
-        expand(config['run_db_root'] + "/runs/{run}/{run}.report.pdf", run = ID_runs),
-        expand(config['run_db_root'] + "/runs/{run}/{run}.report.md", run = ID_runs),
-        expand(config['run_db_root'] + "/runs/{run}/{run}.barcodes.tsv", run = ID_runs),
-        expand(config['run_db_root'] + "/runs/{run}/{run}.mux.csv", run = ID_runs),
-        config['run_db_root'] + "/ont_runs_multiqc.html",
-        config['run_db_root'] + "/ont_runs.xlsx",
-        config['run_db_root'] + "/plot/timeline.png"
-        config['run_db_root'] + "/ont_runs_multiqc.html"
-        ]
+#     'qc' : ['qc/multiqc_report.html'],
+#     'modbases' : expand("Sample_{s}/{s}.mod.bam", s=ID_samples),
+#     'assembly' : expand("Sample_{s}/{s}.asm.{asm}.fasta",
+#          s=ID_samples, asm=config['assembly']['methods']),
+#     'variant_calling': [],
+#     'structural_variant_calling': [],
+#     'cDNA_expression' : expand("Sample_{s}/{s}.counts.tsv", s=ID_samples),
+#     'de_analysis' : ["de_analysis/dtu_plots.pdf"],
+#     'cDNA_stringtie' : expand("Sample_{s}/{s}.stringtie.gtf", s=ID_samples) +
+#         expand("qc/sqanti/{s}_stringtie/{s}_stringtie_classification.txt", s = ID_samples),
+#     'cDNA_flair': expand("Sample_{s}/{s}.flair.gtf", s=ID_samples) +
+#         expand("qc/sqanti/{s}_flair/{s}_flair_classification.txt", s = ID_samples),
+#     'dual_demux': expand("Sample_{s}/{s}_barcode_distribution.pdf", s = ID_samples) +
+#         expand("Sample_{s}/coverage_stats.txt", s = ID_samples),
+#     'qc_db' : [
+#         expand(config['run_db_root'] + "/runs/{run}/{run}.pycoQC.html", run = ID_runs),
+#         expand(config['run_db_root'] + "/runs/{run}/{run}.pycoQC.json", run = ID_runs),
+#         expand(config['run_db_root'] + "/runs/{run}/{run}.report.pdf", run = ID_runs),
+#         expand(config['run_db_root'] + "/runs/{run}/{run}.report.md", run = ID_runs),
+#         expand(config['run_db_root'] + "/runs/{run}/{run}.barcodes.tsv", run = ID_runs),
+#         expand(config['run_db_root'] + "/runs/{run}/{run}.mux.csv", run = ID_runs),
+#         config['run_db_root'] + "/ont_runs_multiqc.html",
+#         config['run_db_root'] + "/ont_runs.xlsx",
+#         config['run_db_root'] + "/plot/timeline.png"
+#         config['run_db_root'] + "/ont_runs_multiqc.html"
+#         ]
 }
 
-# Add Variant calling outputs:
-if config['vc']['pepper']:
-    out['variant_calling'] += expand("Sample_{s}/{s}.pepper_margin_dv.vcf.gz", s=ID_samples)
-if config['vc']['clair3']:
-    out['variant_calling'] += expand("Sample_{s}/{s}.clair3.vcf.gz", s=ID_samples)
-if config['vc']['medaka']:
-    out['variant_calling'] += expand("Sample_{s}/{s}.medaka.vcf.gz", s=ID_samples)
-
-# Add SV calling outputs:
-if config['sv']['sniffles']:
-    out['structural_variant_calling'] += expand("Sample_{s}/{s}.sv_sniffles.vcf.gz", s=ID_samples),
-if config['sv']['cutesv']:
-    out['structural_variant_calling'] +=expand("Sample_{s}/{s}.sv_cutesv.vcf.gz", s=ID_samples),
-if config['sv']['dipdiff']:
-    out['structural_variant_calling'] +=expand("Sample_{s}/{s}.dipdiff.vcf.gz", s=ID_samples)
+## Add Variant calling outputs:
+# if config['vc']['pepper']:
+#     out['variant_calling'] += expand("Sample_{s}/{s}.pepper_margin_dv.vcf.gz", s=ID_samples)
+# if config['vc']['clair3']:
+#     out['variant_calling'] += expand("Sample_{s}/{s}.clair3.vcf.gz", s=ID_samples)
+# if config['vc']['medaka']:
+#     out['variant_calling'] += expand("Sample_{s}/{s}.medaka.vcf.gz", s=ID_samples)
+#
+# # Add SV calling outputs:
+# if config['sv']['sniffles']:
+#     out['structural_variant_calling'] += expand("Sample_{s}/{s}.sv_sniffles.vcf.gz", s=ID_samples),
+# if config['sv']['cutesv']:
+#     out['structural_variant_calling'] +=expand("Sample_{s}/{s}.sv_cutesv.vcf.gz", s=ID_samples),
+# if config['sv']['dipdiff']:
+#     out['structural_variant_calling'] +=expand("Sample_{s}/{s}.dipdiff.vcf.gz", s=ID_samples)
 
 out_selected = [out[step] for step in config['steps']]
+print("out_selected:", out_selected)
+
 
 rule all:
     input:
