@@ -2,7 +2,7 @@
 
 steps:
   - mapping
-    #- qc
+  - qc
 
 
 ## reference
