@@ -13,10 +13,10 @@ steps:
 ## reference
 
 ref:
-  genome: resources/data_repository2/data_repository/GRCh38_ensembl/genome_fastq/GRCh38.106.genome.fa
-  annotation: resources/data_repository2/data_repository/GRCh38_ensembl/annotation/GRCh38.106.gtf.gz
-  annotation_bed: resources/data_repository2/data_repository/GRCh38_ensembl/annotation/GRCh38.106.bed
-  cDNA: resources/data_repository2/data_repository/GRCh38_ensembl/genome_fastq/GRCh38.106.cdna.fa
+  genome: resources/data_repo/results/GRCh38_ensembl/genome_fastq/GRCh38.106.genome.fa
+  annotation: resources/data_repo/results/GRCh38_ensembl/annotation/GRCh38.106.gtf.gz
+  annotation_bed: resources/data_repo/results/GRCh38_ensembl/annotation/GRCh38.106.bed
+  cDNA: resources/data_repo/results/GRCh38_ensembl/genome_fastq/GRCh38.106.cdna.fa
   target_region: resources/FAME3/target_region.GRCh38.bed
 
 
